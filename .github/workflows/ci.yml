@@ -1,0 +1,41 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          # Install any necessary dependencies here
+          # For JavaScript, you might run `npm install` or `yarn install`
+          # For Python, you might run `pytest` or `pip install -r requirements.txt`
+
+      - name: Run tests
+        run: |
+          # Replace this with the actual test command
+          # For JavaScript, you might run `npm test` or `yarn test`
+          # For Python, you might run `pytest` or `python -m unittest`
+
+          # Check if the first line of index.html contains <!DOCTYPE html>
+          if ! grep -q '<!DOCTYPE html>' index.html; then
+            echo '::error::The <!DOCTYPE html> declaration is missing in index.html'
+            
+            # Create a GitHub issue using the GitHub API
+            echo "Creating GitHub issue..."
+            issue_title="Test Failure: Missing <!DOCTYPE html>"
+            issue_body="The test failed because the <!DOCTYPE html> declaration is missing in index.html."
+            label="flaky"
+            
+            curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              -d '{"title":"'"$issue_title"'","body":"'"$issue_body"'","labels":["'"$label"'"]}' \
+              "https://api.github.com/repos/${{ github.repository }}/issues"
+          fi
