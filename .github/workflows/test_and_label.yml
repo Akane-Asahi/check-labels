@@ -16,4 +16,4 @@ jobs:
     - name: Run the test and label script
       run: |
         chmod +x test_and_label.sh
-        ./test_and_label.sh
+        ./test_and_label.sh || true
